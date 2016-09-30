@@ -1,30 +1,42 @@
 /*
-	OLMHash Password Scheme
+        OLMHash Password Scheme
 */
 
-struct userhash{
-	char name[32];
-	char hash[32];
+/*
+	Get the userID
+*/
+char *getUser(){
+    char userID[32];
+
+	while(1){
+    	printf("Enter in your user ID: ");
+    	fgets(userID, 31, stdin);
+		if (strlen(userID) > 4){
+			break;
+		}
+		printf("Minimum userID length: 4 characters!\n");
+	}
+	return userID;
 }
 
-typedef struct userhash userhash
+/********************* E function *************************/
+// DES replacement cipher
+// The function E takes 4 bytes from *in as input and
+// writes 4 bytes to *out
+void E(char *in, char *out){
+	out[0]=(in[0]&0x80)^(((in[0]>>1)&0x7F)^((in[0])&0x7F));
+	out[1]=((in[1]&0x80)^((in[0]<<7)&0x80))^(((in[1]>>1)&0x7F)^((in[1])&0x7F));
+	out[2]=((in[2]&0x80)^((in[1]<<7)&0x80))^(((in[2]>>1)&0x7F)^((in[2])&0x7F));
+	out[3]=((in[3]&0x80)^((in[2]<<7)&0x80))^(((in[3]>>1)&0x7F)^((in[3])&0x7F));
+}
 
-int prompt(char ){
-	/*
-		Get the userID
-	*/
-	int userIDLength = 32;
-	char userID[userIDLength];
-	printf("Enter in your user ID: ");
-	fgets(userID, userIDLength - 1, stdin);
-
-	int i = 1, max_attempts = 3;
-	char pass[12];
-	do{
-		printf("Enter in your password :");
-		fgets(pass, 11, stdin);
-
-
-	}while (i < max_attempts);
-
+/*
+	Call E, with uppercase input chars
+*/
+void ECall(char *in, char *out){
+	char upperin[4];
+	for (int i = 0; i < 4; i++){
+		upperin[i] = toupper(in[i]);
+	}
+	E(upperin[i],out);
 }
