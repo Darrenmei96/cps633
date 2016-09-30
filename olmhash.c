@@ -30,6 +30,16 @@ char *getUserInfo(char *userID){
 }
 
 char *getPassword(char *passHash){
+	char password[12];
+	int counter = 0;
+	while(1){
+		printf("Enter in your password: ");
+		fgets(password, 11, stdin);
+
+	}
+}
+
+char *fillChar(char *password){
 	
 }
 
