@@ -41,10 +41,12 @@ char *getPassword(char *passHash){
 }
 
 char *fillChar(char *password){
-	int zeroesNeeded = 12 - strlen(*password);
+	int zeroesNeeded = 11 - strlen(*password);
 	while (zeroesNeeded != 0){
 	  //add zero to the end of password
+		password[strlen(*password) - 1 - zeroesNeeded] = NULL;
 	  //zeroesNeeded - 1 
+		zeroesNeed--;
 	}	
 		
 }
