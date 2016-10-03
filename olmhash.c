@@ -51,6 +51,8 @@ char *fillChar(char *password){
 		
 }
 
+
+
 /********************* E function *************************/
 // DES replacement cipher
 // The function E takes 4 bytes from *in as input and
