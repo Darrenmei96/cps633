@@ -37,10 +37,16 @@ char *getPassword(char *passHash){
 		fgets(password, 11, stdin);
 
 	}
+	return password;
 }
 
 char *fillChar(char *password){
-	
+	int zeroesNeeded = 12 - strlen(*password);
+	while (zeroesNeeded != 0){
+	  //add zero to the end of password
+	  //zeroesNeeded - 1 
+	}	
+		
 }
 
 /********************* E function *************************/
