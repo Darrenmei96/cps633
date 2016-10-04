@@ -48,7 +48,7 @@ char *fillChar(char *password){
 	  //zeroesNeeded - 1 
 		zeroesNeed--;
 	}	
-		
+	return password;	
 }
 
 
