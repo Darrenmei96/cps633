@@ -35,6 +35,7 @@ char *getUser(){
 			break;
 		}
 		printf("Minimum userID length: 4 characters!\n");
+		return 0;
 	}
 	return userID;
 }

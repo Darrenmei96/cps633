@@ -29,14 +29,11 @@ void E(char *in, char *out){
 }
 
 void *padChar(char *pass){
-    char *tmp = calloc(sizeof(char), 13);
-    char *tmp2 = pass;
-    free(tmp2);
-    pass = tmp;
 	int i = strlen(pass);
 	while (i<13){
 		pass[i++] = '\0';
 	}
+    printf("%s",pass);
 }
 
 char *passToHash(char *pass){

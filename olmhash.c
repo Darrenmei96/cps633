@@ -18,10 +18,10 @@ void generateAccount(char *name, char *pass){
 }
 
 void generateAccounts(){
-    generateAccount("darren\n","w4st3");
-    generateAccount("namm\n","n0p3");
-    generateAccount("raymon\n","j4d3");
-    generateAccount("mustafa\n","f33t");
+    generateAccount("darren\n","1234\n");
+    generateAccount("namm\n","n0p3\n");
+    generateAccount("raymon\n","j4d3\n");
+    generateAccount("mustafa\n","f33t\n");
 }
 
 int olmHash(){
@@ -31,6 +31,9 @@ int olmHash(){
     char *userid, *userpwhash;
     while(1){
         userid = getUser();
+        if (userid == 0){
+            break;
+        }
         userpwhash = getUserInfo(userid);
         if (userpwhash == 0){
             registerAccount(userid, getHashedPassword());
