@@ -2,15 +2,56 @@
         OLMHash Password Scheme
 */
 
+#include "olmhash.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void E(char *in, char *out);
+char *getUserInfo(char *userid);
+char *getUser();
+char *getPasswordHashed();
+
+userhash **accountList;
+int currentIndex = 0;
+
+int main(void){
+    ;
+}
+
+int olmHash(){
+
+    *accountList = malloc(sizeof(userhash) * MAX_USERS);
+
+    char *userid, *userpwhash;
+    while(1){
+        userid = getUser();
+        userpwhash = getUserInfo(userid);
+        if (!userpwhash){
+            registerAccount(userid);
+        }else{
+            checkPassword(userid);
+        }
+    }
+}
+
+char *passToHash(char *pass){
+    char *hash = malloc(sizeof(char)*13);
+    int i = 0;
+    for(; i < 3; ++i){
+        E(&pass[4*i], &hash[4*i]);
+    }
+    return hash;
+}
+
 /*
 	Get the userID
 */
 char *getUser(){
-    char userID[32];
-
+    char *userID = malloc(sizeof(char) * 33);
 	while(1){
     	printf("Enter in your user ID: ");
-    	fgets(userID, 31, stdin);
+    	fgets(userID, 32, stdin);
 		if (strlen(userID) > 4){
 			break;
 		}
@@ -20,128 +61,91 @@ char *getUser(){
 }
 
 char *getUserInfo(char *userID){
- 	struct nlist info = lookup(userID);
-	if (info != NULL){
-		//if the table entry is not null
-		//return the password hash
-		return info->defn;
-	}
-	return NULL;
+ 	int i = 0;
+    for(; i < MAX_USERS ; i++){
+        if (accountList[i]->name == NULL){
+            break;
+        }else if (strcmp(accountList[i]->name,userID)==0){
+            return accountList[i]->hash;
+        }
+    }
+    return 0;
 }
 
-char *getPassword(char *passHash){
-	char password[12];
+int checkPassword(char *passHash){
 	int counter = 0;
-	while(1){
-		printf("Enter in your password: ");
-		fgets(password, 11, stdin);
-
+	while(counter++<MAX_ATTEMPTS){
+        //The compared hashes are the same
+        //assume that the passwords are equal
+        if (strcmp(getPasswordHashed(), passHash) == 0){
+            return 1;
+            break;
+        }
 	}
-	return password;
+    //if password cannot be retrieved and authenticated given
+    //a reasonable amount of tries, exit
+    return 0;
+}
+
+int registerAccount(char *userID){
+    if(currentIndex >= MAX_USERS){
+        return 0;
+    }
+    printf("userID: %s not found! ", userID);
+    accountList[currentIndex]->name = userID;
+    accountList[currentIndex]->hash = getPasswordHashed();
+    printf("Account created!\n");
+    return 1;
+}
+
+char *getPasswordHashed(){
+    char *password = malloc(sizeof(char) * 13);
+    printf("Enter in a password: ");
+    fgets(password, 12, stdin);
+    if (!checkPasswordFormat(password)){
+        return getPasswordHashed();
+    }
+    return passToHash(password);
+}
+
+int checkPasswordFormat(char *pass){
+    int i = 0;
+    for(;i<13; ++i){
+        //if it is neither a letter or a digit, password
+        //format is incorrect
+        if(!isalpha(pass[i]) || !isdigit(pass[i])){
+            return 0;
+        }
+    }
+    return 1;
 }
 
 char *fillChar(char *password){
-	int zeroesNeeded = 11 - strlen(*password);
+	int zeroesNeeded = 12 - strlen(password);
 	while (zeroesNeeded != 0){
 	  //add zero to the end of password
-		password[strlen(*password) - 1 - zeroesNeeded] = NULL;
-	  //zeroesNeeded - 1 
-		zeroesNeed--;
-	}	
-	return password;	
+		password[strlen(password) - 1 - zeroesNeeded] = '\0';
+	  //zeroesNeeded - 1
+		--zeroesNeeded;
+	}
+	return password;
 }
 
 
 
 /********************* E function *************************/
 // DES replacement cipher
-// The function E takes 4 bytes from *in as input and
+// The function E takes 4 bytes from *in as input
+// after a conversion to uppercase and
 // writes 4 bytes to *out
 void E(char *in, char *out){
-	out[0]=(in[0]&0x80)^(((in[0]>>1)&0x7F)^((in[0])&0x7F));
-	out[1]=((in[1]&0x80)^((in[0]<<7)&0x80))^(((in[1]>>1)&0x7F)^((in[1])&0x7F));
-	out[2]=((in[2]&0x80)^((in[1]<<7)&0x80))^(((in[2]>>1)&0x7F)^((in[2])&0x7F));
-	out[3]=((in[3]&0x80)^((in[2]<<7)&0x80))^(((in[3]>>1)&0x7F)^((in[3])&0x7F));
+    char in0 = toupper(in[0]);
+    char in1 = toupper(in[1]);
+    char in2 = toupper(in[2]);
+    char in3 = toupper(in[3]);
+
+	out[0]=(in0&0x80)^(((in0>>1)&0x7F)^((in0)&0x7F));
+	out[1]=((in1&0x80)^((in0<<7)&0x80))^(((in1>>1)&0x7F)^((in1)&0x7F));
+	out[2]=((in2&0x80)^((in1<<7)&0x80))^(((in2>>1)&0x7F)^((in2)&0x7F));
+	out[3]=((in3&0x80)^((in2<<7)&0x80))^(((in3>>1)&0x7F)^((in3)&0x7F));
 }
-
-/*
-	Call E, with uppercase input chars
-*/
-void ECall(char *in, char *out){
-	char upperin[4];
-	for (int i = 0; i < 4; i++){
-		upperin[i] = toupper(in[i]);
-	}
-	E(upperin[i],out);
-}
-
-
-
-/*
-	Beginning of dictionary definition
-*/
-
-
-struct nlist { /* table entry: */
-    struct nlist *next; /* next entry in chain */
-    char *name; /* defined name */
-    char *defn; /* replacement text */
-};
-
-//Note that hashtab will become what holds our user-pass info
-#define HASHSIZE 128
-static struct nlist *hashtab[HASHSIZE]; /* pointer table */
-
-/* hash: form hash value for string s */
-unsigned hash(char *s)
-{
-    unsigned hashval;
-    for (hashval = 0; *s != '\0'; s++)
-      hashval = *s + 31 * hashval;
-    return hashval % HASHSIZE;
-}
-
-/* lookup: look for s in hashtab */
-struct nlist *lookup(char *s)
-{
-    struct nlist *np;
-    for (np = hashtab[hash(s)]; np != NULL; np = np->next)
-        if (strcmp(s, np->name) == 0)
-          return np; /* found */
-    return NULL; /* not found */
-}
-
-char *strdup(char *);
-/* install: put (name, defn) in hashtab */
-struct nlist *install(char *name, char *defn)
-{
-    struct nlist *np;
-    unsigned hashval;
-    if ((np = lookup(name)) == NULL) { /* not found */
-        np = (struct nlist *) malloc(sizeof(*np));
-        if (np == NULL || (np->name = strdup(name)) == NULL)
-          return NULL;
-        hashval = hash(name);
-        np->next = hashtab[hashval];
-        hashtab[hashval] = np;
-    } else /* already there */
-        free((void *) np->defn); /*free previous defn */
-    if ((np->defn = strdup(defn)) == NULL)
-       return NULL;
-    return np;
-}
-
-char *strdup(char *s) /* make a duplicate of s */
-{
-    char *p;
-    p = (char *) malloc(strlen(s)+1); /* +1 for ’\0’ */
-    if (p != NULL)
-       strcpy(p, s);
-    return p;
-}
-
-
-/*
-	End of dictionary definition - taken from
-	section 6.6 of "The C Programming Language"
-*/
