@@ -11,3 +11,5 @@ void ioDestroy();
 char *getUser();
 char *getHashedPassword();
 char *getUserInfo();
+int registerAccount();
+int checkPassword();
