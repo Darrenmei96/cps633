@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include <string.h>
 
-userhash **accountList;
+userhash *accountList;
 int currentIndex = 0;
 
 void ioInit(){
-	printf("Initializing the user list!\n");
-	*accountList = malloc(sizeof(userhash*) * MAX_USERS);
+	userhash *list = calloc(sizeof(userhash), MAX_USERS);
+	accountList = list;
 }
 
 char *getUser(){
@@ -35,6 +35,7 @@ char *getHashedPassword(){
     printf("Enter in a password: ");
     fgets(password, 12, stdin);
     if (!checkPasswordFormat(password)){
+		printf("Incorrect format!\n");
         return getHashedPassword();
     }
     return passToHash(password);
@@ -43,10 +44,10 @@ char *getHashedPassword(){
 char *getUserInfo(char *userID){
  	int i = 0;
     for(; i < MAX_USERS ; i++){
-        if (accountList[i]->name == NULL){
+        if (accountList[i].name == NULL){
             break;
-        }else if (strcmp(accountList[i]->name,userID)==0){
-            return accountList[i]->hash;
+        }else if (strcmp(accountList[i].name,userID)==0){
+            return accountList[i].hash;
         }
     }
     return 0;
@@ -71,9 +72,21 @@ int registerAccount(char *userID){
     if(currentIndex >= MAX_USERS){
         return 0;
     }
-    printf("userID: %s not found! ", userID);
-    accountList[currentIndex]->name = userID;
-    accountList[currentIndex]->hash = getHashedPassword();
+    //printf("\nuserID: %s not found! ", userID);
+    accountList[currentIndex].name = userID;
+    accountList[currentIndex].hash = getHashedPassword();
     printf("Account created!\n");
+	++currentIndex;
     return 1;
+}
+
+void ioDestroy(){
+	int i = 0;
+	for(;i<MAX_USERS;i++){
+		if(accountList[i].name){
+			free(accountList[i].name);
+			free(accountList[i].hash);
+		}
+	}
+	free(accountList);
 }

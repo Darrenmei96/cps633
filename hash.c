@@ -7,6 +7,7 @@
 #include "hash.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 
 /********************* E function *************************/
@@ -45,12 +46,22 @@ char *passToHash(char *pass){
 
 int checkPasswordFormat(char *pass){
     int i = 0;
+	printf("%s",pass);
     for(;i<13; ++i){
+		if(pass[i] < 32){
+			break;
+		}
+
         //if it is neither a letter or a digit, password
         //format is incorrect
-        if(!isalpha(pass[i]) || !isdigit(pass[i])){
-            return 0;
-        }
+		if (isalpha(pass[i])){
+			continue;
+		}
+		if (isdigit(pass[i])){
+			continue;
+		}
+		return 0;
+
     }
     return 1;
 }

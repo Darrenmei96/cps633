@@ -9,17 +9,17 @@
 #include <stdio.h>
 
 int olmHash(){
-    printf("olmHash\n");
     ioInit();
     char *userid, *userpwhash;
     while(1){
         userid = getUser();
         userpwhash = getUserInfo(userid);
-        if (!userpwhash){
+        if (userpwhash == 0){
             registerAccount(userid);
         }else{
             checkPassword(userpwhash);
             break;
         }
     }
+    ioDestroy();
 }
