@@ -36,8 +36,6 @@ char *getUser(){
 		}
 		printf("Minimum userID length: 4 characters!\n");
 	}
-	//fgets also has a stray \n for some reason
-	userID[strlen(userID)-1] = '\0';
 	return userID;
 }
 
@@ -45,7 +43,6 @@ char *getHashedPassword(){
 	char *password = calloc(sizeof(char), 13);
     printf("Enter in a password: ");
     fgets(password, 13, stdin);
-	password[strlen(password)-1] = '\0';
     if (!checkPasswordFormat(password)){
 		printf("Incorrect format! Alphanumeric only!\n");
         return getHashedPassword();

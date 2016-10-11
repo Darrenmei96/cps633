@@ -29,6 +29,10 @@ void E(char *in, char *out){
 }
 
 void *padChar(char *pass){
+    char *tmp = calloc(sizeof(char), 13);
+    char *tmp2 = pass;
+    free(tmp2);
+    pass = tmp;
 	int i = strlen(pass);
 	while (i<13){
 		pass[i++] = '\0';
@@ -37,11 +41,12 @@ void *padChar(char *pass){
 
 char *passToHash(char *pass){
 	padChar(pass);
-	char *hash = malloc(sizeof(char)*13);
+	char *hash = calloc(sizeof(char),13);
     int i = 0;
     for(; i < 3; ++i){
         E(&pass[4*i], &hash[4*i]);
     }
+    printf("%s\n",hash);
     return hash;
 }
 
