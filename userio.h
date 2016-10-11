@@ -7,6 +7,7 @@ typedef struct userhash{
 } userhash;
 
 void ioInit();
+void printList();
 void ioDestroy();
 char *getUser();
 char *getHashedPassword();

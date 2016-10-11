@@ -12,30 +12,42 @@
 userhash *accountList;
 int currentIndex = 0;
 
+void printList(){
+	int i = 0;
+	while(i<currentIndex){
+		if(accountList[i].name != NULL){
+			printf("%s\n", accountList[i++].name);
+		}
+	}
+}
+
 void ioInit(){
 	userhash *list = calloc(sizeof(userhash), MAX_USERS);
 	accountList = list;
 }
 
 char *getUser(){
-    char *userID = malloc(sizeof(char) * 33);
+    char *userID = calloc(sizeof(char), 33);
 	while(1){
     	printf("Enter in your user ID: ");
-    	fgets(userID, 32, stdin);
+    	fgets(userID, 33, stdin);
 		if (strlen(userID) > 4){
 			break;
 		}
 		printf("Minimum userID length: 4 characters!\n");
 	}
+	//fgets also has a stray \n for some reason
+	userID[strlen(userID)-1] = '\0';
 	return userID;
 }
 
 char *getHashedPassword(){
-	char *password = malloc(sizeof(char) * 13);
+	char *password = calloc(sizeof(char), 13);
     printf("Enter in a password: ");
-    fgets(password, 12, stdin);
+    fgets(password, 13, stdin);
+	password[strlen(password)-1] = '\0';
     if (!checkPasswordFormat(password)){
-		printf("Incorrect format!\n");
+		printf("Incorrect format! Alphanumeric only!\n");
         return getHashedPassword();
     }
     return passToHash(password);
@@ -43,10 +55,8 @@ char *getHashedPassword(){
 
 char *getUserInfo(char *userID){
  	int i = 0;
-    for(; i < MAX_USERS ; i++){
-        if (accountList[i].name == NULL){
-            break;
-        }else if (strcmp(accountList[i].name,userID)==0){
+    for(; i < currentIndex ; i++){
+        if (strcmp(accountList[i].name,userID)==0){
             return accountList[i].hash;
         }
     }
@@ -59,22 +69,24 @@ int checkPassword(char *passHash){
         //The compared hashes are the same
         //assume that the passwords are equal
         if (strcmp(getHashedPassword(), passHash) == 0){
+			printf("Login Successful!\n");
             return 1;
             break;
         }
+		printf("Incorrect password!\n");
 	}
     //if password cannot be retrieved and authenticated given
     //a reasonable amount of tries, exit
     return 0;
 }
 
-int registerAccount(char *userID){
+int registerAccount(char *userID, char *passwordhash){
     if(currentIndex >= MAX_USERS){
         return 0;
     }
     //printf("\nuserID: %s not found! ", userID);
     accountList[currentIndex].name = userID;
-    accountList[currentIndex].hash = getHashedPassword();
+    accountList[currentIndex].hash = passwordhash;
     printf("Account created!\n");
 	++currentIndex;
     return 1;

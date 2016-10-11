@@ -47,7 +47,6 @@ char *passToHash(char *pass){
 
 int checkPasswordFormat(char *pass){
     int i = 0;
-	printf("%s",pass);
     for(;i<13; ++i){
 		if(pass[i] < 32){
 			break;
