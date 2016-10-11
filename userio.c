@@ -16,7 +16,7 @@ void printList(){
 	int i = 0;
 	while(i<currentIndex){
 		if(accountList[i].name != NULL){
-			printf("%s\n", accountList[i++].name);
+			printf("%s", accountList[i++].name);
 		}
 	}
 }
