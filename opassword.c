@@ -5,22 +5,22 @@
 #include "Hash.h"
 #include "OLMHash.h"
 
-#define MAX_PASS_PART3 4
+#define PASS 4
 #define TABLE_LENGTH 456976
 void recurse(char * pass, int index, int max);
 int initArray(char** arr, int rows, int columns);
 void mStrCpy(int size, char* dest, char* src);
-char passwords[TABLE_LENGTH][MAX_PASS_PART3 + 1];
-char hashes[TABLE_LENGTH][MAX_PASS_PART3 + 1];
+char passwords[TABLE_LENGTH][PASS + 1];
+char hashes[TABLE_LENGTH][PASS + 1];
 
 int oPass()
 {
 	//allocate an initial password string
-	char * p = (char*)calloc(MAX_PASS_PART3 + 1, sizeof(char));
+	char * p = (char*)calloc(PASS + 1, sizeof(char));
 	//set the last character to null terminator
-	p[MAX_PASS_PART3] = 0;
+	p[PASS] = \0;
 	//call the recurse function to populate the entire dictionary with hashes and passwords
-	recurse(p, 0, MAX_PASS_PART3);
+	recurse(p, 0, PASS);
 	//take input of hashes to output passwords
 	while (1){
 		//allocate a string of the max username length
